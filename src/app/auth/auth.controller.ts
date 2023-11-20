@@ -21,6 +21,7 @@ import { Auth_UserResponse } from './responses/user.response';
 import { Auth_RefreshResponse } from './responses/auth-refresh.response';
 import { Auth_RefreshDto } from './dto/auth-refresh.dto';
 import { Public } from 'src/services/auth/public';
+import { RequestType } from 'src/types';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -79,7 +80,7 @@ export class AuthController {
   })
   @HttpCode(HttpStatus.OK)
   @Get('user')
-  async user(@Req() req: any) {
+  async user(@Req() req: RequestType) {
     return this.authService.user(req.userId);
   }
 }

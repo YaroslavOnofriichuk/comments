@@ -53,7 +53,7 @@ export class AuthService {
 
     if (!isMatch) throw new BadRequestException('Wrong email or password');
 
-    const payload = { sub: user.id, name: user.name };
+    const payload = { id: user.id, name: user.name };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, jwtConfig.access),
@@ -68,17 +68,17 @@ export class AuthService {
 
   async refresh({ refreshToken: _refreshToken }: Auth_RefreshDto) {
     const payload = await this.jwtService
-      .verify(_refreshToken, jwtConfig.refresh)
+      .verifyAsync(_refreshToken, jwtConfig.refresh)
       .catch(() => {
         throw new BadRequestException('Unable to validate refresh token');
       });
 
     const user = await this.userRepository
       .createQueryBuilder()
-      .where(`"User"."id" = :id`, { id: payload.sub })
+      .where(`"User"."id" = :id`, { id: payload.id })
       .getOne();
 
-    const newPayload = { sub: user.id, name: user.name };
+    const newPayload = { id: user.id, name: user.name };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(newPayload, jwtConfig.access),

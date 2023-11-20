@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
+import { CommentsModule } from './comments/comments.module';
 import { AuthGuard } from 'src/services/auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +10,7 @@ import { dbConf } from '../config';
 @Module({
   imports: [
     AuthModule,
+    CommentsModule,
     JwtModule,
     ConfigModule.forRoot({
       isGlobal: true,
