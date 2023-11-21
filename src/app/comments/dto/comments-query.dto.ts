@@ -1,22 +1,19 @@
-import { IsInt, IsOptional, IsIn } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsOptional, IsIn, IsString } from 'class-validator';
 
 export class GetCommentsDto {
-  @IsInt()
-  @IsOptional()
-  @Transform((value) => parseInt(value.toString(), 10))
-  page: number;
+    @IsString()
+    @IsOptional()
+    page: string;
 
-  @IsInt()
-  @IsOptional()
-  @Transform((value) => parseInt(value.toString(), 10))
-  limit: number;
+    @IsString()
+    @IsOptional()
+    limit: string;
 
-  @IsOptional()
-  @IsIn(['createdAt', 'userName', 'userEmail'])
-  sortBy: string;
+    @IsOptional()
+    @IsIn(['createdAt', 'userName', 'userEmail'])
+    sortBy: string;
 
-  @IsOptional()
-  @IsIn(['ASC', 'DESC'])
-  sortOrder: 'ASC' | 'DESC';
+    @IsOptional()
+    @IsIn(['ASC', 'DESC'])
+    sortOrder: 'ASC' | 'DESC';
 }
