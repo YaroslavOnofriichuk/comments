@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from 'src/entities/comment/comment.entity';
 import { CommentFile } from 'src/entities/comment/comment-file.entity';
-import { FileSevice } from 'src/services/file';
+import { FileSevice } from 'src/services/file/file.service';
 
 @Injectable()
 export class CommentFilesService {
