@@ -33,7 +33,7 @@ export class CommentsService {
             );
         }
 
-        await this.cacheService.del('allComments');
+        await this.cacheService.reset();
 
         return await this.commentRepository.save({
             ...createCommentDto,
@@ -47,7 +47,7 @@ export class CommentsService {
         sortBy = 'createdAt',
         sortOrder: 'ASC' | 'DESC' = 'DESC',
     ) {
-        const cacheKey = 'allComments';
+        const cacheKey = `comments_${page}_${limit}_${sortBy}_${sortOrder}`;
         const cachedComments = await this.cacheService.get(cacheKey);
         if (cachedComments) {
             return cachedComments;
@@ -152,8 +152,7 @@ export class CommentsService {
 
         await this.commentRepository.update(id, updateCommentDto);
 
-        await this.cacheService.del(`commentById_${id}`);
-        await this.cacheService.del('allComments');
+        await this.cacheService.reset();
 
         return await this.commentRepository.findOne({
             where: { id },
@@ -184,8 +183,7 @@ export class CommentsService {
 
         await this.commentRepository.delete({ id });
 
-        await this.cacheService.del(`commentById_${id}`);
-        await this.cacheService.del('allComments');
+        await this.cacheService.reset();
     }
 
     async getCommentChildren(comment: Comment): Promise<Comment[]> {
