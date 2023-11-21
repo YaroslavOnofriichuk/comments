@@ -17,4 +17,8 @@ export class CacheService {
     async del(key: string) {
         return this.cacheManager.del(key);
     }
+
+    async reset() {
+        return this.cacheManager.reset();
+    }
 }
