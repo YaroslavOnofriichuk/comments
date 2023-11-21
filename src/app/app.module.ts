@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { CommentFilesModule } from './comment-files/comment-files.module';
@@ -10,6 +11,7 @@ import { dbConf, multerConfig } from '../config';
 import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CacheService } from 'src/services/cache/cache.service';
 
 @Module({
     imports: [
@@ -31,6 +33,7 @@ import { join } from 'path';
             rootPath: join(__dirname, '..', 'files'),
             serveRoot: '/dist',
         }),
+        CacheModule.register({ isGlobal: true }),
     ],
     providers: [
         {

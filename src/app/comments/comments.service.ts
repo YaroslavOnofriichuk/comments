@@ -11,7 +11,8 @@ import { Repository } from 'typeorm';
 import { Comment } from 'src/entities/comment/comment.entity';
 import { CommentFile } from 'src/entities/comment/comment-file.entity';
 import { CommentValidator } from 'src/services/commentValidator';
-import { FileSevice } from 'src/services/file';
+import { FileSevice } from 'src/services/file/file.service';
+import { CacheService } from 'src/services/cache/cache.service';
 
 @Injectable()
 export class CommentsService {
@@ -22,6 +23,7 @@ export class CommentsService {
         private readonly commentFileRepository: Repository<CommentFile>,
         private readonly commentValidator: CommentValidator,
         private readonly fileService: FileSevice,
+        private readonly cacheService: CacheService,
     ) {}
 
     async create(createCommentDto: CreateCommentDto, userId: number) {
@@ -30,6 +32,9 @@ export class CommentsService {
                 'Invalid HTML tags or structure in the comment text',
             );
         }
+
+        await this.cacheService.del('allComments');
+
         return await this.commentRepository.save({
             ...createCommentDto,
             userId,
@@ -42,6 +47,11 @@ export class CommentsService {
         sortBy = 'createdAt',
         sortOrder: 'ASC' | 'DESC' = 'DESC',
     ) {
+        const cacheKey = 'allComments';
+        const cachedComments = await this.cacheService.get(cacheKey);
+        if (cachedComments) {
+            return cachedComments;
+        }
         const qb = this.commentRepository
             .createQueryBuilder('comment')
             .leftJoinAndSelect('comment.user', 'user')
@@ -74,7 +84,7 @@ export class CommentsService {
             commentsWithChildren.push(comment);
         }
 
-        return {
+        const result = {
             comments: commentsWithChildren,
             currentPage,
             limit,
@@ -84,9 +94,20 @@ export class CommentsService {
             prevPage:
                 currentPage > 1 && totalPages > 1 ? currentPage - 1 : null,
         };
+
+        await this.cacheService.set(cacheKey, result, 60000);
+
+        return result;
     }
 
     async findOne(id: number) {
+        const cacheKey = `commentById_${id}`;
+        const cachedComment = await this.cacheService.get(cacheKey);
+
+        if (cachedComment) {
+            return cachedComment;
+        }
+
         const comment = await this.commentRepository.findOne({
             where: { id },
             relations: { user: true, files: true },
@@ -95,10 +116,15 @@ export class CommentsService {
         if (!comment) throw new NotFoundException();
 
         const children = await this.getCommentChildren(comment);
-        return {
+
+        const result = {
             ...comment,
             children,
         };
+
+        await this.cacheService.set(cacheKey, result, 60000);
+
+        return result;
     }
 
     async update(
@@ -125,6 +151,9 @@ export class CommentsService {
         }
 
         await this.commentRepository.update(id, updateCommentDto);
+
+        await this.cacheService.del(`commentById_${id}`);
+        await this.cacheService.del('allComments');
 
         return await this.commentRepository.findOne({
             where: { id },
@@ -154,6 +183,9 @@ export class CommentsService {
         }
 
         await this.commentRepository.delete({ id });
+
+        await this.cacheService.del(`commentById_${id}`);
+        await this.cacheService.del('allComments');
     }
 
     async getCommentChildren(comment: Comment): Promise<Comment[]> {
