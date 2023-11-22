@@ -2,17 +2,23 @@
   Тестове завдання comments
 </p>
 
+<p align="center">
 <a href="https://comments-test-8ebr.onrender.com" target="_blank">
  API url
 </a>
+</p>
 
+<p align="center">
 <a href="https://comments-test-8ebr.onrender.com/api" target="_blank">
  Swagger url
 </a>
+</p>
 
+<p align="center">
 <a href="https://github.com/YaroslavOnofriichuk/comments/blob/main/db_schema.sql" target="_blank">
  Схема бази данних
 </a>
+</p>
 
 <p>
 Для того щоб додавати, редагувати і видаляти коментарі потрібно 
@@ -30,7 +36,7 @@
 
 <p>
 До кометаря можна <a href="https://comments-test-8ebr.onrender.com/api#/Auth/AuthController_register" target="_blank">прикріпити файл</a>,
-Або <a href="https://comments-test-8ebr.onrender.com/api#/Comment%20files/CommentFilesController_remove" target="_blank">видалити його</a>
+aбо <a href="https://comments-test-8ebr.onrender.com/api#/Comment%20files/CommentFilesController_remove" target="_blank">видалити його</a>
 </p>
 
 <p>
